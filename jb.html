@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MagicGames - Procesando Exploit</title>
+    <style>
+        body {
+            background-color: #121212;
+            color: #ffffff;
+            font-family: sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            overflow-y: auto;
+            margin: 0;
+        }
+        .loader-container {
+            text-align: center;
+        }
+        h1 {
+            color: #007acc;
+            margin-bottom: 5px;
+        }
+        p {
+            color: #aaaaaa;
+            font-size: 18px;
+            margin-bottom: 25px;
+        }
+        /* Compatibilidad PS4 WebKit: Margen en lugar de gap */
+        .log-box {
+            background-color: #1e1e1e;
+            border: 1px solid #333333;
+            border-radius: 5px;
+            width: 80%;
+            max-width: 600px;
+            height: 180px;
+            overflow-y: scroll;
+            padding: 15px;
+            font-family: monospace;
+            font-size: 14px;
+            color: #00ff00;
+            text-align: left;
+        }
+        .log-entry {
+            margin-bottom: 8px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="loader-container">
+        <h1>MagicGames Exploit Engine</h1>
+        <p id="status-text">Inicializando vulnerabilidad WebKit 14.00...</p>
+    </div>
+
+    <div class="log-box" id="log-box" tabindex="0">
+        <div class="log-entry">[INFO] Menu de inyeccion MagicGames activo.</div>
+        <div class="log-entry">[INFO] Leyendo parametros del punto de entrada...</div>
+    </div>
+
+    <script>
+        // Logica para leer lo que el usuario presiono en el index.html
+        window.onload = function() {
+            var logBox = document.getElementById('log-box');
+            if(logBox) logBox.focus();
+
+            const urlParams = new URLSearchParams(window.location.search);
+            const afterglowStatus = urlParams.get('afterglow'); 
+            const exploitMode = urlParams.get('mode');         
+
+            if (afterglowStatus === 'run') {
+                escribirLog("[SISTEMA] Punto de entrada validado.");
+                
+                // Muestra en pantalla que payload se va a enviar a los scripts de la imagen
+                if (exploitMode === 'goldhen') {
+                    escribirLog("[MODO] Seleccionado: GoldHEN v2.4b18.13");
+                    document.getElementById('status-text').innerText = "Cargando parches y GoldHEN...";
+                } else if (exploitMode === 'hen222') {
+                    escribirLog("[MODO] Seleccionado: PS4HEN Beta 2.22");
+                    document.getElementById('status-text').innerText = "Cargando PS4HEN...";
+                } else if (exploitMode === 'linux') {
+                    escribirLog("[MODO] Seleccionado: Linux Loader");
+                    document.getElementById('status-text').innerText = "Llamando entorno Linux...";
+                } else {
+                    escribirLog("[MODO] Seleccionado: Modificaciones de sistema (" + exploitMode + ")");
+                }
+
+                escribirLog("[WEBKIT] Transfiriendo ejecucion al ecosistema Afterglow...");
+            } else {
+                escribirLog("[ERROR] Acceso incorrecto. Debes usar los botones del menu principal.");
+                document.getElementById('status-text').innerText = "Error de ejecucion.";
+            }
+        };
+
+        function escribirLog(texto) {
+            var logBox = document.getElementById('log-box');
+            var entrada = document.createElement('div');
+            entrada.className = 'log-entry';
+            entrada.innerText = texto;
+            logBox.appendChild(entrada);
+            logBox.scrollTop = logBox.scrollHeight;
+        }
+    </script>
+
+    <!-- CONEXIÓN DE LOS ARCHIVOS DEL EXPLOIT (En el orden exacto de tu imagen) -->
+    <script src="int64.js"></script>
+    <script src="mem.js"></script>
+    <script src="core.js"></script>
+    <script src="ps4_offsets.js"></script>
+    <script src="jb.js"></script>
+    <script src="afterglow.js"></script>
+
+</body>
+</html>
+
